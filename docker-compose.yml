@@ -1,0 +1,42 @@
+version: '3'
+services:
+  golang:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    networks:
+      - db
+    links:
+      - postgres
+  postgres:
+    image: "postgres"
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root      
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data  
+    networks:
+      - db # this will make an alias to postgres container
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "gui@alura.com"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    ports:
+      - "54321:80"
+    depends_on:
+      - postgres
+    networks:
+      - db
+
+networks:
+  db:
+
